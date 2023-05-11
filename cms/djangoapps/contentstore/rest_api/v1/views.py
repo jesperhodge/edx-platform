@@ -20,6 +20,14 @@ from .serializers import (
     ProctoredExamSettingsSerializer
 )
 
+from openedx.core.lib.api.view_utils import DeveloperErrorViewMixin, view_auth_classes
+from xmodule.modulestore.django import modulestore  # lint-amnesty, pylint: disable=wrong-import-order
+from common.djangoapps.util.json_request import expect_json_in_class_view
+
+from cms.djangoapps.contentstore.utils import course_author_access_required
+
+from cms.djangoapps.contentstore.views.block import handle_xblock
+
 
 @view_auth_classes()
 class ProctoredExamSettingsView(APIView):
@@ -182,3 +190,22 @@ class ProctoredExamSettingsView(APIView):
             )
 
         return course_block
+
+
+@view_auth_classes()
+class XblockView(DeveloperErrorViewMixin, APIView):
+    @course_author_access_required
+    @expect_json_in_class_view
+    def post(self, request, course_key, usage_key_string=None):
+        response = handle_xblock(request, usage_key_string)
+
+        print(response)
+        return response
+
+    @course_author_access_required
+    @expect_json_in_class_view
+    def post(self, request, course_key, usage_key_string=None):
+        response = handle_xblock(request, usage_key_string)
+
+        print(response)
+        return response
